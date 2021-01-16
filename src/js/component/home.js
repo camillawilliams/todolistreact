@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 //include images into your bundle
 import rigoImage from "../../img/rigo-baby.jpg";
@@ -12,6 +12,26 @@ export const Home = () => {
 	]);
 	const [userInput, setUserInput] = useState("");
 
+    useEffect(() => {
+        fetch('https://assets.breatheco.de/apis/fake/todos/user/camillav') 
+        .thenfunction(response) {
+            if (!response.ok) {
+                throw Error(response.statusText);
+            }
+            //Read the response as json.
+            return response.json(); // (returns promise) will try to parse the result as json as return a promise that you can .then for results
+        })
+        .then(function(responseAsJson) {
+            setList(responseAsJson);
+        })
+            .catch(function(error) {
+            //error handling
+            console.log("Looks like there was a problem: \n", error); //this will print on the console the exact object received from the server
+        });
+}, [];
+
+   
+    
 	const handleKeyUp = event => {
 		if (event.keyCode == 13 && userInput != "") {
 			setList(theList.concat(userInput));
