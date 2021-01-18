@@ -23,6 +23,7 @@ export const Home = () => {
 			})
 			.then(function(responseAsJson) {
 				setList(responseAsJson);
+				//
 			})
 			.catch(function(error) {
 				//error handling
@@ -62,7 +63,8 @@ export const Home = () => {
 						{theList.map((value, index) => {
 							return (
 								<li className="list-group-item" key={index}>
-									{value}
+									{value.label}
+									{/* value is an object and you can only put text here */}
 									<button
 										type="button"
 										onClick={() => itemDelete(index)}
