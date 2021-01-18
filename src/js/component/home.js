@@ -34,11 +34,23 @@ export const Home = () => {
 	const handleKeyUp = event => {
 		if (event.keyCode == 13 && userInput != "") {
 			setList(
-				theList.concat({
-					label: userInput,
-					done: false
-				})
-			);
+                theList.concat(userInput));
+                fetch("https://assets.breatheco.de/apis/fake/todos/user/camillavv",{
+                method: 'PUT', // or 'Post'
+                body: JSON.stringify( theList.concat(userInput)), //data can be a string or {object}!
+                headers:{
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (!response.ok) {
+					throw Error(response.statusText);
+                }
+                return response.json(); //Read the response as json
+            })
+            .then(response => console.log('Success:', response))
+            .catch(error => console.error('Error:', error));
+            
+            setUserInput("");
 		}
 	};
 	const itemDelete = index => {
