@@ -34,23 +34,57 @@ export const Home = () => {
 	const handleKeyUp = event => {
 		if (event.keyCode == 13 && userInput != "") {
 			setList(
-                theList.concat(userInput));
-                fetch("https://assets.breatheco.de/apis/fake/todos/user/camillavv",{
-                method: 'PUT', // or 'Post'
-                body: JSON.stringify( theList.concat(userInput)), //data can be a string or {object}!
-                headers:{
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => {
-                if (!response.ok) {
-					throw Error(response.statusText);
-                }
-                return response.json(); //Read the response as json
-            })
-            .then(response => console.log('Success:', response))
-            .catch(error => console.error('Error:', error));
-            
-            setUserInput("");
+				theList.concat({
+					label: userInput,
+					done: false
+				})
+			);
+			fetch(
+				"https://assets.breatheco.de/apis/fake/todos/user/camillavv",
+				{
+					method: "PUT", // or 'Post'
+					body: JSON.stringify(
+						theList.concat({
+							label: userInput,
+							done: false
+						})
+					),
+					headers: {
+						"Content-Type": "application/json"
+					}
+				}
+			)
+				.then(response => {
+					if (!response.ok) {
+						throw Error(response.statusText);
+					}
+					return response.json(); //Read the response as json
+				})
+				.then(response => {
+					console.log("Success:", response);
+					fetch(
+						"https://assets.breatheco.de/apis/fake/todos/user/camillavv"
+					)
+						.then(function(response) {
+							if (!response.ok) {
+								throw Error(response.statusText);
+							}
+							//Read the response as json.
+							return response.json(); // (returns promise) will try to parse the result as json as return a promise that you can .then for results
+						})
+						.then(function(responseAsJson) {
+							setList(responseAsJson);
+							setUserInput("");
+						})
+						.catch(function(error) {
+							//error handling
+							console.log(
+								"Looks like there was a problem: \n",
+								error
+							); //this will print on the console the exact object received from the server
+						});
+				})
+				.catch(error => console.error("Error:", error));
 		}
 	};
 	const itemDelete = index => {
@@ -58,6 +92,45 @@ export const Home = () => {
 			(task, taskIndex) => index != taskIndex
 		);
 		setList(updatedList);
+		//this is the delete method
+		fetch("https://assets.breatheco.de/apis/fake/todos/user/camillavv", {
+			method: "PUT", // or 'Post'
+			body: JSON.stringify(updatedList), //added updated list to JSON
+			headers: {
+				"Content-Type": "application/json"
+			}
+		})
+			.then(response => {
+				if (!response.ok) {
+					throw Error(response.statusText);
+				}
+				return response.json(); //Read the response as json
+			})
+			.then(response => {
+				console.log("Success:", response);
+				fetch(
+					"https://assets.breatheco.de/apis/fake/todos/user/camillavv"
+				)
+					.then(function(response) {
+						if (!response.ok) {
+							throw Error(response.statusText);
+						}
+						//Read the response as json.
+						return response.json(); // (returns promise) will try to parse the result as json as return a promise that you can .then for results
+					})
+					.then(function(responseAsJson) {
+						setList(responseAsJson);
+						// setUserInput(""); this is removed because we don't need it anymore
+					})
+					.catch(function(error) {
+						//error handling
+						console.log(
+							"Looks like there was a problem: \n",
+							error
+						); //this will print on the console the exact object received from the server
+					});
+			})
+			.catch(error => console.error("Error:", error));
 	};
 
 	return (
